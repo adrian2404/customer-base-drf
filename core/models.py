@@ -2,6 +2,24 @@ from django.db import models
 
 # Create your models here.
 
+class Profession(models.Model):
+    description = models.CharField(max_length=100)
+
+
+class DataSheet(models.Model):
+    description = models.CharField(max_length=100)
+    historical_data = models.TextField()
+
+
+class Customer(models.Model):
+    name = models.CharField(max_length=50)
+    address = models.CharField(max_length=80)
+    professions = models.ManyToManyField(Profession)
+    data_sheet = models.OneToOneField(DataSheet, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
 class Document(models.Model):
     PP = 'PP'
     ID = 'ID'
@@ -14,15 +32,7 @@ class Document(models.Model):
     )
     dtype = models.CharField(choices=DOC_TYPES, max_length=2)
     doc_number = models.CharField(max_length=50)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.doc_number
-
-
-class Customer(models.Model):
-    name = models.CharField(max_length=50)
-    address = models.CharField(max_length=80)
-    document = models.ManyToManyField(Document)
-
-    def __str__(self):
-        return self.name
