@@ -41,4 +41,4 @@ class Document(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.doc_number
+        return '{} for {}'.format(self.doc_number, self.customer.name)
