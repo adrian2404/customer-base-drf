@@ -9,8 +9,11 @@ from .serializers import (
 )
 
 class CustomerViewSet(viewsets.ModelViewSet):
-    queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+    def get_queryset(self):
+        active_customers = Customer.objects.filter(active=True)
+        return active_customers
 
 
 class ProfessionViewSet(viewsets.ModelViewSet):
