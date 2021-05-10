@@ -14,10 +14,10 @@ class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
 
     def get_queryset(self):
-        customer_id = self.request.query_params.get('id', None)
-        status = True if self.request.query_params.get('active', None) == 'True' else False
-        if customer_id:
-            customers = Customer.objects.filter(id=customer_id, active=status)
+        address = self.request.query_params.get('address', None)
+        status = False if self.request.query_params.get('active', None) == 'False' else True
+        if address:
+            customers = Customer.objects.filter(address__icontains=address, active=status)
         else:
             customers = Customer.objects.filter(active=status)
         return customers
