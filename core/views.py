@@ -14,11 +14,16 @@ class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
 
     def get_queryset(self):
-        active_customers = Customer.objects.filter(active=True)
-        return active_customers
+        customer_id = self.request.query_params.get('id', None)
+        status = True if self.request.query_params.get('active', None) == 'True' else False
+        if customer_id:
+            customers = Customer.objects.filter(id=customer_id, active=status)
+        else:
+            customers = Customer.objects.filter(active=status)
+        return customers
 
     def list(self, request, *args, **kwargs):
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
@@ -93,7 +98,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def activate_all(self, request, **kwargs):
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         customers.update(active=True)
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
@@ -101,7 +106,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def change_status(self, request, **kwargs):
         status = True if request.data.get('active') == 'True' else False
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         customers.update(active=status)
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
