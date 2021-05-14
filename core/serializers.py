@@ -3,19 +3,10 @@ from rest_framework import serializers
 from .models import Customer, Profession, DataSheet, Document
 
 
-class CustomerSerializer(serializers.ModelSerializer):
+class DataSheetSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Customer
-        fields = ('id', 'name', 'address', 'professions', 'data_sheet', 'active', 'status_string',
-                  'num_professions', 'document_set')
-
-    num_professions = serializers.SerializerMethodField()
-    data_sheet = serializers.PrimaryKeyRelatedField(read_only=True)
-    professions = serializers.StringRelatedField(many=True)
-    document_set = serializers.StringRelatedField(many=True)
-
-    def get_num_professions(self, obj):
-        return obj.num_professions()
+        model = DataSheet
+        fields = ('description', 'historical_data')
 
 
 class ProfessionSerializer(serializers.ModelSerializer):
@@ -24,10 +15,19 @@ class ProfessionSerializer(serializers.ModelSerializer):
         fields = ('id', 'description')
 
 
-class DataSheetSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DataSheet
-        fields = ('description', 'historical_data')
+        model = Customer
+        fields = ('id', 'name', 'address', 'professions', 'data_sheet', 'active', 'status_string',
+                  'num_professions', 'document_set')
+
+    num_professions = serializers.SerializerMethodField()
+    data_sheet = DataSheetSerializer()
+    professions = ProfessionSerializer(many=True)
+    document_set = serializers.StringRelatedField(many=True)
+
+    def get_num_professions(self, obj):
+        return obj.num_professions()
 
 
 class DocumentSerializer(serializers.ModelSerializer):
