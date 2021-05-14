@@ -15,6 +15,12 @@ class ProfessionSerializer(serializers.ModelSerializer):
         fields = ('id', 'description')
 
 
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ('dtype', 'doc_number', 'customer')
+
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
@@ -22,15 +28,21 @@ class CustomerSerializer(serializers.ModelSerializer):
                   'num_professions', 'document_set')
 
     num_professions = serializers.SerializerMethodField()
-    data_sheet = DataSheetSerializer()
+    data_sheet = DataSheetSerializer(read_only=True)
     professions = ProfessionSerializer(many=True)
-    document_set = serializers.StringRelatedField(many=True)
+    document_set = DocumentSerializer(many=True, read_only=True)
 
     def get_num_professions(self, obj):
         return obj.num_professions()
 
+    def create(self, validated_data):
+        professions = validated_data.pop('professions')
+        customer = Customer.objects.create(**validated_data)
 
-class DocumentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Document
-        fields = ('dtype', 'doc_number', 'customer')
+        for profession in professions:
+            prof = Profession.objects.create(**profession)
+            customer.professions.add(prof)
+
+        customer.save()
+
+        return customer
