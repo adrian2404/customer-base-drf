@@ -10,7 +10,7 @@ class CustomerSerializer(serializers.ModelSerializer):
                   'num_professions', 'document_set')
 
     num_professions = serializers.SerializerMethodField()
-    data_sheet = serializers.StringRelatedField()
+    data_sheet = serializers.PrimaryKeyRelatedField(read_only=True)
     professions = serializers.StringRelatedField(many=True)
     document_set = serializers.StringRelatedField(many=True)
 
