@@ -25,6 +25,13 @@ class Customer(models.Model):
     active = models.BooleanField(default=True)
     doc_num = models.CharField(max_length=12, unique=True)
 
+    @property
+    def status_string(self):
+        if self.active:
+            return 'Customer is active'
+        else:
+            return 'Customer is not active'
+
     def __str__(self):
         return self.name
 
