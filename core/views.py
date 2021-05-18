@@ -16,7 +16,7 @@ from .serializers import (
 
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    # authentication_classes = [TokenAuthentication, BasicAuthentication]
     # permission_classes = [IsAdminUser,]
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ('name',)
