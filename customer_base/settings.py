@@ -1,6 +1,5 @@
 import os
 from decouple import config
-from dj_database_url import parse as dburl
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -8,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['customer-base-adrian.herokuapp.com',]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -57,10 +56,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'customer_base.wsgi.application'
 
-default_dburl = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
-
 DATABASES = {
-    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'customer_base',
+        'PASSWORD': 'django1234',
+        'USER': 'adrian',
+        'HOST': 'localhost',
+        'PORT': '5432'
+    }
 }
 
 
